@@ -6,8 +6,12 @@ namespace ygg::thread
 {
     void spinlock::lock()
     {
-        while (m_flag.test_and_set(std::memory_order::acquire))
-            ;
+        while (true) {
+            if (!m_flag.test_and_set(std::memory_order_acquire))
+                break;
+            while (m_flag.test(std::memory_order::relaxed))
+                ;
+        }
     }
 
     void spinlock::unlock()
