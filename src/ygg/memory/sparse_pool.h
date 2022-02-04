@@ -14,8 +14,8 @@ namespace ygg::memory
     class sparse_pool
     {
         static_assert(sizeof(T) >= sizeof(std::size_t),
-            "This implementation of sparse_pool stores the linked list "
-            "inside the data store itself. The index size is sizeof(std::size_t).");
+            "This implementation of sparse_pool stores the linked list inside the data store itself. "
+            "The index size (sizeof(std::size_t)) must be less than or equal to sizeof(T).");
     public:
         /**
          * @brief Emplaces an element into this pool, returning the index.
