@@ -13,12 +13,12 @@ namespace ygg::thread
         /**
          * @brief Locks the spinlock until it has been unlocked via unlock().
         */
-        void lock();
+        void lock() noexcept;
 
         /**
          * @brief Unlocks this spinlock, making it available for other threads.
         */
-        void unlock();
+        void unlock() noexcept;
 
     private:
         std::atomic_flag m_flag = ATOMIC_FLAG_INIT;

@@ -4,7 +4,7 @@
 
 namespace ygg::thread
 {
-    void spinlock::lock()
+    void spinlock::lock() noexcept
     {
         while (true) {
             if (!m_flag.test_and_set(std::memory_order::acquire))
@@ -14,7 +14,7 @@ namespace ygg::thread
         }
     }
 
-    void spinlock::unlock()
+    void spinlock::unlock() noexcept
     {
         m_flag.clear(std::memory_order::release);
     }
