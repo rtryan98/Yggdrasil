@@ -1,5 +1,7 @@
 // Copyright 2022 Robert Ryan. See Licence.md.
 
+#pragma once
+
 #include <atomic>
 
 namespace ygg::thread
