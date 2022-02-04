@@ -7,8 +7,10 @@ namespace ygg::thread
     class spinlock
     {
     public:
+        void lock();
+        void unlock();
 
     private:
-        std::atomic<bool> m_val;
+        std::atomic_flag m_flag = ATOMIC_FLAG_INIT;
     };
 }
