@@ -10,6 +10,7 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo;Release" CACHE STRING "" FOR
 
 project(${YGG_PROJECT})
 find_package(Vulkan REQUIRED)
+add_subdirectory("vendor/volk")
 
 file(GLOB_RECURSE "YGG_LIBRARY_SRC" "src/ygg/*.h" "src/ygg/*.cpp")
 ygg_group_files("${YGG_LIBRARY_SRC}")
