@@ -37,6 +37,8 @@ target_link_libraries(${YGG_APPLICATION} PRIVATE ${YGG_LIBRARY})
 if(MSVC)
     target_compile_options(${YGG_LIBRARY} PRIVATE
         "/W4" "/MP" "/std:c++latest" "/WX" "/wd26812")
+    target_compile_options(${YGG_APPLICATION} PRIVATE
+        "/W4" "/MP" "/std:c++latest" "/WX" "/wd26812")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
         "$<$<CONFIG:Debug>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=1>")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
