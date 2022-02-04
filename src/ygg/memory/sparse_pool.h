@@ -8,6 +8,8 @@ namespace ygg::memory
 {
     /**
      * @brief A non-iterable object store, to provide faster allocation objects stored on the heap.
+     * @details If T has an user-defined destructor that must be called,
+     * the user is required to call `sparse_pool<T>::remove(std::size_t idx)`.
      * @tparam T The type that will be stored.
     */
     template<typename T>
@@ -57,28 +59,28 @@ namespace ygg::memory
          * @param idx The index of the element.
          * @return The element associated with idx.
         */
-        [[nodiscard]] T& at(std::size_t idx) { return m_vector.at(idx); }
+        [[nodiscard]] T& at(std::size_t idx) noexcept { return m_vector.at(idx); }
 
         /**
          * @brief Returns the element associated with the provided index `idx`.
          * @param idx The index of the element.
          * @return The element associated with idx.
         */
-        [[nodiscard]] const T& at(std::size_t idx) const { return m_vector.at(idx); }
+        [[nodiscard]] const T& at(std::size_t idx) const noexcept { return m_vector.at(idx); }
 
         /**
          * @brief Returns the element associated with the provided index `idx`.
          * @param idx The index of the element.
          * @return The element associated with idx.
         */
-        [[nodiscard]] T& operator[](std::size_t idx) { return m_vector[idx]; }
+        [[nodiscard]] T& operator[](std::size_t idx) noexcept { return m_vector[idx]; }
 
         /**
          * @brief Returns the element associated with the provided index `idx`.
          * @param idx The index of the element.
          * @return The element associated with idx.
         */
-        [[nodiscard]] const T& operator[](std::size_t idx) const { return m_vector[idx]; }
+        [[nodiscard]] const T& operator[](std::size_t idx) const noexcept { return m_vector[idx]; }
 
     private:
         static constexpr inline uint64_t G_NO_HEAD = ~0ull;
