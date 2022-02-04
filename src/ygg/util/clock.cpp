@@ -4,7 +4,7 @@
 
 namespace ygg::util
 {
-    clock::clock()
+    clock::clock() noexcept
         : m_current_time( std::chrono::system_clock::now() ),
         m_last_time( m_current_time ),
         m_dt( 0.0f ),

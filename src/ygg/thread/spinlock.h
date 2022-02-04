@@ -10,6 +10,8 @@ namespace ygg::thread
     class spinlock
     {
     public:
+        spinlock() noexcept = default;
+
         /**
          * @brief Locks the spinlock until it has been unlocked via unlock().
         */

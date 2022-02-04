@@ -7,10 +7,13 @@
 
 namespace ygg::util
 {
+    /**
+     * @brief Frame-based clock. Provides utility to calculate delta times and time since creation.
+    */
     class clock
     {
     public:
-        clock();
+        clock() noexcept;
 
         /**
          * @brief Advanced the current frame and calculates the current delta time and time since start.
