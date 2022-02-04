@@ -7,7 +7,7 @@ namespace ygg::thread
     void spinlock::lock()
     {
         while (true) {
-            if (!m_flag.test_and_set(std::memory_order_acquire))
+            if (!m_flag.test_and_set(std::memory_order::acquire))
                 break;
             while (m_flag.test(std::memory_order::relaxed))
                 ;
