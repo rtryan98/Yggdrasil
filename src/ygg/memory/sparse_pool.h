@@ -2,23 +2,36 @@
 
 #pragma once
 
+#include <type_traits>
 #include <vector>
 
 namespace ygg::memory
 {
     /**
-     * @brief A non-iterable object store, to provide faster allocation objects stored on the heap.
-     * @details If T has an user-defined destructor that must be called,
-     * the user is required to call `sparse_pool<T>::remove(std::size_t idx)`.
+     * @brief A non-iterable object store, to provide faster allocation.
+     * @details If T has members adhering to the RAII-idiom,
+     * SafeDestruction must be `true` and T must be default-constructible.
      * @tparam T The type that will be stored.
+     * @tparam SafeDestruction Whether or not destruction of sparse_pool instances is safe.
     */
-    template<typename T>
+    template<typename T, bool SafeDestruction = false>
     class sparse_pool
     {
         static_assert(sizeof(T) >= sizeof(std::size_t),
             "This implementation of sparse_pool stores the linked list inside the data store itself. "
             "The index size (sizeof(std::size_t)) must be less than or equal to sizeof(T).");
+        static_assert((std::is_default_constructible_v(T) && SafeDestruction) || !SafeDestruction,
+            "This implementation requires T to be default constructible when SafeDestruction is true.");
     public:
+        ~sparse_pool()
+        {
+            if constexpr (SafeDestruction) {
+                while (m_head != m_no_head) {
+                    emplace();
+                }
+            }
+        }
+
         /**
          * @brief Emplaces an element into this pool, returning the index.
          * @details The order of insertion after removal is defined by a linked list.
@@ -31,7 +44,7 @@ namespace ygg::memory
         std::size_t emplace(Args&&... args)
         {
             std::size_t idx = m_head;
-            if (idx != G_NO_HEAD) {
+            if (idx != m_no_head) {
                 m_head = *reinterpret_cast<std::size_t*>(&m_vector[idx]);
                 m_vector[idx] = T(std::forward<Args>(args)...);
                 return idx;
@@ -83,8 +96,8 @@ namespace ygg::memory
         [[nodiscard]] const T& operator[](std::size_t idx) const noexcept { return m_vector[idx]; }
 
     private:
-        static constexpr inline uint64_t G_NO_HEAD = ~0ull;
+        static constexpr inline uint64_t m_no_head = ~0ull;
         std::vector<T> m_vector;
-        std::size_t m_head = G_NO_HEAD;
+        std::size_t m_head = m_no_head;
     };
 }

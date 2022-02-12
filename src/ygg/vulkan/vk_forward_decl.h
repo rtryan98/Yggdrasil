@@ -1,4 +1,4 @@
-// Copyright 2022 Robert Ryan. See LICENCE.md.
+// Copyright 2022 Robert Ryan. See Licence.md.
 
 #pragma once
 
