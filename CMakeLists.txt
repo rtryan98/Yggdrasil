@@ -41,11 +41,11 @@ if(MSVC)
     target_compile_options(${YGG_APPLICATION} PRIVATE
         "/W4" "/MP" "/std:c++latest" "/WX" "/wd26812")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
-        "$<$<CONFIG:Debug>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=1>")
+        "$<$<CONFIG:Debug>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=1; YGG_VULKAN_NAMES=1>")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
-        "$<$<CONFIG:RelWithDebInfo>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=0>")
+        "$<$<CONFIG:RelWithDebInfo>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=0; YGG_VULKAN_NAMES=1>")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
-        "$<$<CONFIG:Release>:YGG_VULKAN_VALIDATION=0; YGG_DEBUG=0>")
+        "$<$<CONFIG:Release>:YGG_VULKAN_VALIDATION=0; YGG_DEBUG=0; YGG_VULKAN_NAMES=0>")
     set_target_properties(${YGG_LIBRARY} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${YGG_APPLICATION})
 endif()
