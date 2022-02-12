@@ -18,8 +18,9 @@ add_library(${YGG_LIBRARY} ${YGG_LIBRARY_SRC})
 ygg_set_output_dirs(${YGG_LIBRARY})
 
 target_include_directories(${YGG_LIBRARY} PUBLIC
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/vendor/glm")
+    "src"
+    "vendor/glm"
+    "vendor/concurrentqueue")
 target_link_libraries(${YGG_LIBRARY} PUBLIC
     volk_headers)
 
