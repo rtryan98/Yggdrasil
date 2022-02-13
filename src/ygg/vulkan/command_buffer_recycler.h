@@ -13,7 +13,7 @@ namespace ygg::vk
      * @details This recycler does not allow for creating secondary command buffers - prefer using
      * multiple submits instead and synchronize via timeline semaphore.
     */
-    class command_buffer_recycler
+    class Command_buffer_recycler
     {
     public:
         /**
@@ -22,9 +22,9 @@ namespace ygg::vk
          * @param queue_family_index The index of the queue family.
          * @param create_flags Additional flags as specified by VkCommandPoolCreateFlags.
         */
-        command_buffer_recycler(VkDevice device, uint32_t queue_family_index, uint32_t create_flags);
+        Command_buffer_recycler(VkDevice device, uint32_t queue_family_index, uint32_t create_flags);
 
-        ~command_buffer_recycler();
+        ~Command_buffer_recycler();
 
         /**
          * @brief Retrieve a primary VkCommandBuffer.

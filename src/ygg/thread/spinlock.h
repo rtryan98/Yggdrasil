@@ -9,10 +9,10 @@ namespace ygg::thread
     /**
      * @brief Basic lock for synchronizing low-contention work.
     */
-    class spinlock
+    class Spinlock
     {
     public:
-        spinlock() noexcept = default;
+        Spinlock() noexcept = default;
 
         /**
          * @brief Locks the spinlock until it has been unlocked via unlock().

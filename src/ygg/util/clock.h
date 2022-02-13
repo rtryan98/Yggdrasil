@@ -8,12 +8,12 @@
 namespace ygg::util
 {
     /**
-     * @brief Frame-based clock. Provides utility to calculate delta times and time since creation.
+     * @brief Frame-based Clock. Provides utility to calculate delta times and time since creation.
     */
-    class clock
+    class Clock
     {
     public:
-        clock() noexcept;
+        Clock() noexcept;
 
         /**
          * @brief Advanced the current frame and calculates the current delta time and time since start.
@@ -30,8 +30,8 @@ namespace ygg::util
         [[nodiscard]] float_t dt() const noexcept { return m_dt; };
 
         /**
-         * @brief Returns the time since this clock has been constructed.
-         * @return The time since construction of this clock, with `1.0f` representing 1 second.
+         * @brief Returns the time since this Clock has been constructed.
+         * @return The time since construction of this Clock, with `1.0f` representing 1 second.
         */
         [[nodiscard]] float_t time_since_start() const noexcept { return m_time_since_start; };
 

@@ -4,14 +4,14 @@
 
 namespace ygg::util
 {
-    clock::clock() noexcept
+    Clock::Clock() noexcept
         : m_current_time( std::chrono::system_clock::now() ),
         m_last_time( m_current_time ),
         m_dt( 0.0f ),
         m_time_since_start( 0.0f )
     {}
 
-    void clock::next_clock_frame() noexcept
+    void Clock::next_clock_frame() noexcept
     {
         m_last_time = m_current_time;
         m_current_time = std::chrono::system_clock::now();

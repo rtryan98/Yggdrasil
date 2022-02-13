@@ -6,7 +6,7 @@
 
 namespace ygg::vk
 {
-    command_buffer_recycler::command_buffer_recycler(VkDevice device, uint32_t queue_family_index, uint32_t create_flags)
+    Command_buffer_recycler::Command_buffer_recycler(VkDevice device, uint32_t queue_family_index, uint32_t create_flags)
         : m_device(device), m_pool(VK_NULL_HANDLE)
     {
         VkCommandPoolCreateInfo info = {
@@ -19,12 +19,12 @@ namespace ygg::vk
         vkCreateCommandPool(m_device, &info, nullptr, &m_pool);
     }
 
-    command_buffer_recycler::~command_buffer_recycler()
+    Command_buffer_recycler::~Command_buffer_recycler()
     {
         vkDestroyCommandPool(m_device, m_pool, nullptr);
     }
 
-    VkCommandBuffer command_buffer_recycler::get_or_allocate()
+    VkCommandBuffer Command_buffer_recycler::get_or_allocate()
     {
         if (m_available_command_buffers.size()) {
             auto cmdbuf = m_available_command_buffers.back();
@@ -44,12 +44,12 @@ namespace ygg::vk
         return cmdbuf;
     }
 
-    void command_buffer_recycler::recycle(VkCommandBuffer cmdbuf) noexcept
+    void Command_buffer_recycler::recycle(VkCommandBuffer cmdbuf) noexcept
     {
         m_recycled_command_buffers.push_back(cmdbuf);
     }
 
-    void command_buffer_recycler::reset(uint32_t flags)
+    void Command_buffer_recycler::reset(uint32_t flags)
     {
         // TODO: add VK_CHECK
         vkResetCommandPool(m_device, m_pool, flags);

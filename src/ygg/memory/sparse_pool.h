@@ -15,7 +15,7 @@ namespace ygg::memory
      * @tparam SafeDestruction Whether or not destruction of sparse_pool instances is safe.
     */
     template<typename T, bool SafeDestruction = false>
-    class sparse_pool
+    class Sparse_pool
     {
         static_assert(sizeof(T) >= sizeof(std::size_t),
             "This implementation of sparse_pool stores the linked list inside the data store itself. "
@@ -23,7 +23,7 @@ namespace ygg::memory
         static_assert((std::is_default_constructible_v(T) && SafeDestruction) || !SafeDestruction,
             "This implementation requires T to be default constructible when SafeDestruction is true.");
     public:
-        ~sparse_pool()
+        ~Sparse_pool()
         {
             if constexpr (SafeDestruction) {
                 while (m_head != m_no_head) {
