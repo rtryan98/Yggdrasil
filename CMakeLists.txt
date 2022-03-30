@@ -11,6 +11,7 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo;Release" CACHE STRING "" FOR
 project(${YGG_PROJECT})
 find_package(Vulkan REQUIRED)
 add_subdirectory("vendor/volk")
+add_subdirectory("vendor/vma")
 
 file(GLOB_RECURSE "YGG_LIBRARY_SRC" "src/ygg/*.h" "src/ygg/*.cpp")
 ygg_group_files("${YGG_LIBRARY_SRC}")
@@ -22,7 +23,8 @@ target_include_directories(${YGG_LIBRARY} PUBLIC
     "vendor/glm"
     "vendor/concurrentqueue")
 target_link_libraries(${YGG_LIBRARY} PUBLIC
-    volk_headers)
+    volk_headers
+    VulkanMemoryAllocator)
 
 target_compile_definitions(${YGG_LIBRARY} PRIVATE VK_USE_PLATFORM_WIN32_KHR=1)
 target_compile_definitions(${YGG_LIBRARY} PUBLIC

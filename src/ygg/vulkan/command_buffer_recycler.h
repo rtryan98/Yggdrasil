@@ -17,7 +17,7 @@ namespace ygg::vk
     {
     public:
         /**
-         * @brief Constructs a `command_buffer_recycler` instance, bound to the queue family.
+         * @brief Constructs a `Command_buffer_recycler` instance, bound to the queue family.
          * @param device The owning VkDevice.
          * @param queue_family_index The index of the queue family.
          * @param create_flags Additional flags as specified by VkCommandPoolCreateFlags.

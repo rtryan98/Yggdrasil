@@ -42,7 +42,12 @@ YGG_FORWARDDECL_VK_HANDLE(VmaPool);
 YGG_FORWARDDECL_VK_HANDLE(VmaAllocation);
 YGG_FORWARDDECL_VK_HANDLE(VmaDefragmentationContext);
 
-enum VkResult : int32_t;
+typedef uint32_t VkFlags;
+typedef uint64_t VkFlags64;
+typedef VkFlags VkMemoryPropertyFlags;
 
+typedef uint64_t VkDeviceSize;
+
+enum VkResult : int32_t;
 enum VkCommandBufferLevel : int32_t;
 enum VkCommandPoolResetFlagBits : int32_t;
