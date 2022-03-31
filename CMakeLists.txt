@@ -26,10 +26,13 @@ target_link_libraries(${YGG_LIBRARY} PUBLIC
     volk_headers
     VulkanMemoryAllocator)
 
-target_compile_definitions(${YGG_LIBRARY} PRIVATE VK_USE_PLATFORM_WIN32_KHR=1)
+target_compile_definitions(${YGG_LIBRARY} PRIVATE
+    VK_USE_PLATFORM_WIN32_KHR=1)
 target_compile_definitions(${YGG_LIBRARY} PUBLIC
     GLM_FORCE_DEPTH_ZERO_TO_ONE
-    GLM_FORCE_RADIANS)
+    GLM_FORCE_RADIANS
+    YGG_MAX_FRAMES_IN_FLIGHT=3
+    VK_NO_PROTOTYPES)
 
 file(GLOB_RECURSE "YGG_APPLICATION_SRC" "src/ygg_application/*.h" "src/ygg_application/*.cpp")
 ygg_group_files("${YGG_APPLICATION_SRC}")
@@ -39,9 +42,9 @@ target_link_libraries(${YGG_APPLICATION} PRIVATE ${YGG_LIBRARY})
 
 if(MSVC)
     target_compile_options(${YGG_LIBRARY} PRIVATE
-        "/W4" "/MP" "/std:c++latest" "/WX" "/wd26812")
+        "/W4" "/MP" "/std:c++20" "/WX" "/wd26812")
     target_compile_options(${YGG_APPLICATION} PRIVATE
-        "/W4" "/MP" "/std:c++latest" "/WX" "/wd26812")
+        "/W4" "/MP" "/std:c++20" "/WX" "/wd26812")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
         "$<$<CONFIG:Debug>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=1; YGG_VULKAN_NAMES=1>")
     target_compile_definitions(${YGG_LIBRARY} PRIVATE
