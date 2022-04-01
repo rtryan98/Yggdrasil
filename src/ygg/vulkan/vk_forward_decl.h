@@ -43,22 +43,29 @@ YGG_FORWARDDECL_VK_HANDLE(VmaAllocation);
 YGG_FORWARDDECL_VK_HANDLE(VmaDefragmentationContext);
 
 typedef uint32_t VkFlags;
+typedef VkFlags VkBufferUsage;
+typedef VkFlags VkDependencyFlags;
+typedef VkFlags VkImageAspectFlags;
+typedef VkFlags VkImageCreateFlags;
+typedef VkFlags VkImageUsage;
 typedef VkFlags VkMemoryPropertyFlags;
 typedef VkFlags VkImageAspectFlags;
-typedef VkFlags VkDependencyFlags;
 
 typedef uint64_t VkFlags64;
-typedef VkFlags64 VkPipelineStageFlags2;
 typedef VkFlags64 VkAccessFlags2;
+typedef VkFlags64 VkPipelineStageFlags2;
 
 typedef uint64_t VkDeviceSize;
 
-enum VkResult : int32_t;
 enum VkCommandBufferLevel : int32_t;
 enum VkCommandPoolResetFlagBits : int32_t;
 enum VkImageLayout : int32_t;
+enum VkImageType : int32_t;
+enum VkImageViewType : int32_t;
+enum VkFormat : int32_t;
+enum VkResult : int32_t;
 
-struct VkImageSubresourceRange;
-struct VkMemoryBarrier2;
 struct VkBufferMemoryBarrier2;
+struct VkImageSubresourceRange;
 struct VkImageMemoryBarrier2;
+struct VkMemoryBarrier2;
