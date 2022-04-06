@@ -5,8 +5,6 @@
 #include "ygg/vulkan/pipeline_barrier_builder.h"
 #include "ygg/vulkan/vk_forward_decl.h"
 
-#include <span>
-
 namespace ygg::vk
 {
     class Command_buffer_recycler;
@@ -50,9 +48,9 @@ namespace ygg::vk
         int32_t dst_offset_x = 0;
         int32_t dst_offset_y = 0;
         int32_t dst_offset_z = 0;
-        int32_t width;
-        int32_t height;
-        int32_t depth = 1;
+        uint32_t width;
+        uint32_t height;
+        uint32_t depth = 1;
     };
 
     /**

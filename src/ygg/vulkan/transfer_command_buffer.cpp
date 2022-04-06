@@ -40,8 +40,8 @@ namespace ygg::vk
     }
 
     void cmd_upload_color_image(VkCommandBuffer cmdbuf, Linear_host_resource_allocator::Mapped_host_buffer& src,
-        Image& dst, uint32_t width, uint32_t height, uint32_t depth, uint32_t width_offset, uint32_t height_offset,
-        uint32_t depth_offset, uint32_t layers, uint32_t base_layer, uint32_t mip_level)
+        Image& dst, uint32_t width, uint32_t height, uint32_t depth, int32_t width_offset, int32_t height_offset,
+        int32_t depth_offset, uint32_t layers, uint32_t base_layer, uint32_t mip_level)
     {
         VkBufferImageCopy2 copy_region = {
             .sType = VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2,
@@ -94,8 +94,9 @@ namespace ygg::vk
         uint32_t depth, uint32_t width_offset, uint32_t height_offset, uint32_t depth_offset, uint32_t layers,
         uint32_t base_layer, uint32_t mip_level)
     {
-        auto& allocated_buffer = m_allocator
-            .allocate_buffer(width * height * depth * img_utils::format_size(image.info.format), m_queue_family_index);
+        VkDeviceSize size = width * height * depth * img_utils::format_size(image.info.format);
+        auto& allocated_buffer = m_allocator.allocate_buffer(size, m_queue_family_index);
+        memcpy(allocated_buffer.mapped_data, data, size);
         cmd_upload_color_image(m_cmdbuf, allocated_buffer, image, width, height, depth,
             width_offset, height_offset, depth_offset, layers, base_layer, mip_level);
     }
@@ -103,7 +104,7 @@ namespace ygg::vk
     void* Transfer_command_buffer::allocate_and_upload_buffer_data(Buffer& buffer, VkDeviceSize size, VkDeviceSize offset)
     {
         if (buffer.info.domain != Buffer_domain::Device) {
-            assert(false, "The used Buffer_domain in the passed buffer must be Buffer_domain::Device to use this function.");
+            assert(false && "The used Buffer_domain in the passed buffer must be Buffer_domain::Device to use this function.");
             return nullptr;
         }
         auto& allocation = m_allocator.allocate_buffer(size, m_queue_family_index);
