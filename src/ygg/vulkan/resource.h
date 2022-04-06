@@ -56,6 +56,7 @@ namespace ygg::vk
      * from the current frame in flight.
     */
     Allocated_buffer& select_allocated_buffer(Buffer& buffer, uint32_t current_frame_in_flight);
+    const Allocated_buffer& select_allocated_buffer(const Buffer& buffer, uint32_t current_frame_in_flight);
 
     /**
      * @brief Queries the count of `Allocated_buffer`s used in a given buffer domain.

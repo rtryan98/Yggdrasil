@@ -21,6 +21,17 @@ namespace ygg::vk
         }
     }
 
+    const Allocated_buffer& select_allocated_buffer(const Buffer& buffer, uint32_t current_frame_in_flight)
+    {
+        switch (buffer.info.domain)
+        {
+        default: ;
+        case Buffer_domain::Host_write_combined: return buffer.allocated_buffers[0];
+        case Buffer_domain::Device:              return buffer.allocated_buffers[0];
+        case Buffer_domain::Device_host_visible: return buffer.allocated_buffers[current_frame_in_flight];
+        }
+    }
+
     uint32_t get_allocated_buffer_count(Buffer_domain domain, uint32_t max_frames_in_flight)
     {
         switch (domain)
