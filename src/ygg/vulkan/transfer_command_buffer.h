@@ -70,6 +70,16 @@ namespace ygg::vk
             uint32_t frame_in_flight, uint32_t queue_family_index);
 
         /**
+         * @brief Starts recording commands. The command buffer can only be submitted once.
+        */
+        void begin() const;
+
+        /**
+         * @brief Stops recording commands. The command buffer can only be submitted once.
+        */
+        void end() const;
+
+        /**
          * @brief Returns the bound `Pipeline_barrier_builder` instance.
          * @return The `Pipeline_barrier_builder` associated with this command buffer.
         */

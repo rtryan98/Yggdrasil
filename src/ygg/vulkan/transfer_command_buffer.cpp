@@ -18,6 +18,22 @@ namespace ygg::vk
         m_queue_family_index(queue_family_index)
     {}
 
+    void Transfer_command_buffer::begin() const
+    {
+        VkCommandBufferBeginInfo info = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .pNext = nullptr,
+            .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+            .pInheritanceInfo = nullptr
+        };
+        vkBeginCommandBuffer(m_cmdbuf, &info);
+    }
+
+    void Transfer_command_buffer::end() const
+    {
+        vkEndCommandBuffer(m_cmdbuf);
+    }
+
     void cmd_upload_buffer(VkCommandBuffer cmdbuf, Linear_host_resource_allocator::Mapped_host_buffer& src,
         Buffer& dst, VkDeviceSize size, VkDeviceSize offset, uint32_t frame_in_flight)
     {
