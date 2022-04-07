@@ -8,6 +8,35 @@ namespace ygg::vk
 {
     struct Image_info;
 
+    enum class Format_type
+    {
+        Undefined,
+        Int,
+        Normalized,
+        Float,
+        Depth_stencil
+    };
+
+    /**
+     * @brief Information that can be derived from a format.
+    */
+    struct Format_info
+    {
+        VkFormat format;
+        Format_type type;
+        const char* name;
+        uint8_t red : 1;
+        uint8_t green : 1;
+        uint8_t blue : 1;
+        uint8_t alpha : 1;
+        uint8_t depth : 1;
+        uint8_t stencil : 1;
+        uint8_t is_signed : 1;
+        uint8_t srgb : 1;
+        uint8_t texel_size; // bytes in total
+        uint8_t block_size; // for BCn formats
+    };
+
     namespace img_utils
     {
         /**
@@ -54,5 +83,15 @@ namespace ygg::vk
          * @return `VkImageCreateFlags` for the image derived from the given `Image_info`.
         */
         VkImageCreateFlags get_default_image_create_flags(const Image_info& img_info);
+
+        /**
+         * @brief Returns the information about the given format if it is supported.
+        */
+        Format_info get_format_info(VkFormat format);
+
+        /**
+         * @brief Returns the size for each texel in a given `VkFormat`.
+        */
+        uint32_t format_size(VkFormat format);
     }
 }
