@@ -157,7 +157,7 @@ namespace ygg::vk
             VkImageLayout dst_layout, const Image_copy_info& info,
             VkImageAspectFlags src_aspect, VkImageAspectFlags dst_aspect) const;
 
-    private:
+    protected:
         Linear_host_resource_allocator& m_allocator;
         VkCommandBuffer m_cmdbuf;
         Pipeline_barrier_builder m_pipeline_barrier_builder;

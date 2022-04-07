@@ -160,4 +160,13 @@ namespace ygg::vk
      * @param device The device that owns the `Image` instance.
     */
     void destroy_image(Image& image, VmaAllocator allocator, VkDevice device);
+
+    /**
+     * @brief Pipeline "primitive".
+    */
+    struct Pipeline
+    {
+        VkPipeline handle;
+        VkPipelineBindPoint bind_point;
+    };
 }
