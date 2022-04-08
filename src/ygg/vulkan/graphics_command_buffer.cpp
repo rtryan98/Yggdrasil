@@ -44,7 +44,7 @@ namespace ygg::vk
                 };
                 memcpy(&render_attachments[i].clearValue, &attachment.clear_value, sizeof(VkClearValue));
             }
-            ri.colorAttachmentCount = cas.size();
+            ri.colorAttachmentCount = uint32_t(cas.size());
             ri.pColorAttachments = render_attachments.data();
         }
         if (info.depth_attachment.has_value()) {

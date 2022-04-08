@@ -101,7 +101,7 @@ namespace ygg::vk
     class Graphics_command_buffer : public Compute_command_buffer
     {
     public:
-        using Compute_command_buffer::Transfer_command_buffer;
+        using Compute_command_buffer::Compute_command_buffer;
 
         /**
          * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCmdBindIndexBuffer.html
