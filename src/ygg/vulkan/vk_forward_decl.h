@@ -57,8 +57,12 @@ typedef VkFlags64 VkPipelineStageFlags2;
 
 typedef uint64_t VkDeviceSize;
 
+enum VkAttachmentLoadOp : int32_t;
+enum VkAttachmentStoreOp : int32_t;
 enum VkCommandBufferLevel : int32_t;
 enum VkCommandPoolResetFlagBits : int32_t;
+enum VkFilter : int32_t;
+enum VkIndexType : int32_t;
 enum VkImageLayout : int32_t;
 enum VkImageType : int32_t;
 enum VkImageViewType : int32_t;
