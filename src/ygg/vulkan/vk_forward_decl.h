@@ -49,7 +49,7 @@ typedef VkFlags VkImageAspectFlags;
 typedef VkFlags VkImageCreateFlags;
 typedef VkFlags VkImageUsage;
 typedef VkFlags VkMemoryPropertyFlags;
-typedef VkFlags VkImageAspectFlags;
+typedef VkFlags VkShaderStageFlags;
 
 typedef uint64_t VkFlags64;
 typedef VkFlags64 VkAccessFlags2;
@@ -63,9 +63,12 @@ enum VkImageLayout : int32_t;
 enum VkImageType : int32_t;
 enum VkImageViewType : int32_t;
 enum VkFormat : int32_t;
+enum VkPipelineBindPoint : int32_t;
 enum VkResult : int32_t;
 
 struct VkBufferMemoryBarrier2;
 struct VkImageSubresourceRange;
 struct VkImageMemoryBarrier2;
 struct VkMemoryBarrier2;
+
+union VkClearValue;
