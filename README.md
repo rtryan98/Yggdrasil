@@ -6,7 +6,11 @@ The focus of this project is to create a game / render engine for open-world typ
 an editor for creating such worlds. The terrain system planned is heavily inspired by the GDC talks
 about the terrain and procedural techniques used in Far Cry 5 and Horizon Zero Dawn.
 
-# Vulkan
-## Mindset on abstractions
-The abstractions should be as lightweight as possible. Considering that this engine is only using Vulkan
-and will only use Vulkan it isn't sensible to hide all of Vulkan away in an RHI as of now.
+# Design
+The core design of this engine should be lightweight, reusable abstractions that can be used in stand-alone
+sample applications that do not require pulling the entire engine. The amount of interdependencies is kept
+as small as possible to allow for this which caused some decisions in the codebase.
+This should make the engine easier to extend overall.
+
+The engine itself should work more akin to a framework than an engine like Unity or Unreal.
+That means it isn't editor-focused, instead it should be as tools-focused as possible.
