@@ -9,8 +9,7 @@ about the terrain and procedural techniques used in Far Cry 5 and Horizon Zero D
 # Design
 The core design of this engine should be lightweight, reusable abstractions that can be used in stand-alone
 sample applications that do not require pulling the entire engine. The amount of interdependencies is kept
-as small as possible to allow for this which caused some decisions in the codebase.
-This should make the engine easier to extend overall.
+as small as possible to allow for this which should make the engine easier to extend overall.
 
 The engine itself should work more akin to a framework than an engine like Unity or Unreal.
 That means it isn't editor-focused, instead it should be as tools-focused as possible.
