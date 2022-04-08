@@ -9,29 +9,17 @@ namespace ygg::memory
 {
     /**
      * @brief A non-iterable object store, to provide faster allocation.
-     * @details If T has members adhering to the RAII-idiom,
-     * SafeDestruction must be `true` and T must be default-constructible.
      * @tparam T The type that will be stored.
-     * @tparam SafeDestruction Whether or not destruction of sparse_pool instances is safe.
     */
-    template<typename T, bool SafeDestruction = false>
+    template<typename T>
     class Sparse_pool
     {
         static_assert(sizeof(T) >= sizeof(std::size_t),
-            "This implementation of sparse_pool stores the linked list inside the data store itself. "
+            "This implementation of Sparse_pool stores the linked list inside the data store itself. "
             "The index size (sizeof(std::size_t)) must be less than or equal to sizeof(T).");
-        static_assert((std::is_default_constructible_v(T) && SafeDestruction) || !SafeDestruction,
-            "This implementation requires T to be default constructible when SafeDestruction is true.");
+        static_assert(std::is_trivial(T)::value && std::is_standard_layout(T)::value,
+            "T must be POD.");
     public:
-        ~Sparse_pool()
-        {
-            if constexpr (SafeDestruction) {
-                while (m_head != m_no_head) {
-                    emplace();
-                }
-            }
-        }
-
         /**
          * @brief Emplaces an element into this pool, returning the index.
          * @details The order of insertion after removal is defined by a linked list.
@@ -62,7 +50,7 @@ namespace ygg::memory
         */
         void remove(std::size_t idx)
         {
-            m_vector[idx].~T();
+            memset(&m_vector[idx], 0, sizeof(T));
             *reinterpret_cast<std::size_t*> (&m_vector[idx]) = m_head;
             m_head = idx;
         }
