@@ -60,4 +60,10 @@ namespace ygg::vk
         );
         m_recycled_command_buffers.clear();
     }
+
+    void Command_buffer_recycler::make_available_immediate(VkCommandBuffer cmdbuf, bool free)
+    {
+        vkResetCommandBuffer(cmdbuf, free ? VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT : 0);
+        m_available_command_buffers.push_back(cmdbuf);
+    }
 }

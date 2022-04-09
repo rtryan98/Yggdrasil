@@ -51,6 +51,15 @@ namespace ygg::vk
         */
         void reset(uint32_t flags = 0);
 
+        /**
+         * @brief Immediately resets and returns the command buffer to this recycler for reuse.
+         * @details This function can only be used when the flag `VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT`
+         * was set during creation of this recycler.
+         * @param cmdbuf The command buffer to make available.
+         * @param free Whether or not the command buffers resources should be freed.
+        */
+        void make_available_immediate(VkCommandBuffer cmdbuf, bool free = true);
+
     private:
         VkDevice m_device;
         VkCommandPool m_pool;
