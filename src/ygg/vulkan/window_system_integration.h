@@ -48,10 +48,5 @@ namespace ygg::vk
          * @brief Query current windowing systems surface height.
         */
         virtual uint32_t get_height() const { return 0; };
-
-        /**
-         * @brief The minimum amount of swapchain images in the surface requested by the windowing system.
-        */
-        virtual uint32_t buffering_mode(VkPhysicalDevice) const { return 1; };
     };
 }
