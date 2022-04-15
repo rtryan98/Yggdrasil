@@ -15,12 +15,12 @@ namespace ygg::vk
 
     std::vector<std::string> Window_system_integration_win32::query_required_instance_extensions() const
     {
-        return std::vector<std::string>({ VK_KHR_SWAPCHAIN_EXTENSION_NAME });
+        return std::vector<std::string>({ VK_KHR_WIN32_SURFACE_EXTENSION_NAME, VK_KHR_SURFACE_EXTENSION_NAME });
     }
 
     std::vector<std::string> Window_system_integration_win32::query_required_device_extensions() const
     {
-        return std::vector<std::string>({ VK_KHR_WIN32_SURFACE_EXTENSION_NAME, VK_KHR_SURFACE_EXTENSION_NAME });
+        return std::vector<std::string>({ VK_KHR_SWAPCHAIN_EXTENSION_NAME });
     }
 
     VkSurfaceKHR Window_system_integration_win32::create_surface(VkInstance instance) const
