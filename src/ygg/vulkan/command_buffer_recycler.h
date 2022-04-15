@@ -23,7 +23,6 @@ namespace ygg::vk
          * @param create_flags Additional flags as specified by VkCommandPoolCreateFlags.
         */
         Command_buffer_recycler(VkDevice device, uint32_t queue_family_index, uint32_t create_flags);
-
         ~Command_buffer_recycler();
 
         /**

@@ -54,8 +54,8 @@ namespace ygg::vk
         // TODO: add VK_CHECK
         vkResetCommandPool(m_device, m_pool, flags);
         m_available_command_buffers.insert(
+            m_available_command_buffers.begin(),
             m_recycled_command_buffers.begin(),
-            m_recycled_command_buffers.end(),
             m_recycled_command_buffers.end()
         );
         m_recycled_command_buffers.clear();
