@@ -21,13 +21,13 @@ namespace ygg::vk
         /**
          * @brief Query required for the Context's instance creation.
         */
-        std::vector<std::string> query_required_instance_extensions() const { return {}; };
+        virtual std::vector<std::string> query_required_instance_extensions() const { return {}; };
 
         /**
          * @brief Query required for the Context's device creation.
          * @details This will in most cases only return `VK_KHR_SWAPCHAIN_EXTENSION_NAME`.
         */
-        std::vector<std::string> query_required_device_extensions() const { return {}; };
+        virtual std::vector<std::string> query_required_device_extensions() const { return {}; };
 
         /**
          * @brief Surface creation required by the Context.
