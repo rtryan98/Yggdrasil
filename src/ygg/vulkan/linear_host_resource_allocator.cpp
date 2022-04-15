@@ -72,7 +72,7 @@ namespace ygg::vk
 
     Linear_host_resource_allocator& Linear_host_resource_allocator_provider::create_allocator()
     {
-        return m_allocators.emplace_back(Linear_host_resource_allocator(m_allocator));
+        return *m_allocators.emplace_back(std::make_unique<Linear_host_resource_allocator>(m_allocator)).get();
     }
 
     void Linear_host_resource_allocator_provider::reset()

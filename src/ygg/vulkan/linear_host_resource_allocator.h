@@ -4,6 +4,7 @@
 
 #include "ygg/vulkan/vk_forward_decl.h"
 
+#include <memory>
 #include <vector>
 
 namespace ygg::vk
@@ -81,6 +82,6 @@ namespace ygg::vk
         void reset();
     private:
         VmaAllocator m_allocator;
-        std::vector<Linear_host_resource_allocator> m_allocators;
+        std::vector<std::unique_ptr<Linear_host_resource_allocator>> m_allocators;
     };
 }
