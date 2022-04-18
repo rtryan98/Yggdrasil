@@ -10,3 +10,9 @@
 [submodule "vendor/concurrentqueue"]
 	path = vendor/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue
+[submodule "vendor/vulkan-profiles"]
+	path = vendor/vulkan-profiles
+	url = https://github.com/KhronosGroup/Vulkan-Profiles
+[submodule "vendor/vulkan-docs"]
+	path = vendor/vulkan-docs
+	url = https://github.com/KhronosGroup/Vulkan-Docs
