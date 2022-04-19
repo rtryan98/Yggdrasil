@@ -31,6 +31,14 @@ namespace ygg
             break;
         case WM_QUIT:
             break;
+        case WM_SIZE:
+        {
+            RECT r;
+            GetClientRect(hwnd, &r);
+            data.width = r.right;
+            data.height = r.bottom;
+            break;
+        }
         }
         return DefWindowProc(hwnd, msg, wparam, lparam);
     }

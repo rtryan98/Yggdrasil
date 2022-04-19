@@ -59,6 +59,7 @@ typedef uint64_t VkDeviceSize;
 
 enum VkAttachmentLoadOp : int32_t;
 enum VkAttachmentStoreOp : int32_t;
+enum VkColorSpaceKHR : int32_t;
 enum VkCommandBufferLevel : int32_t;
 enum VkCommandPoolResetFlagBits : int32_t;
 enum VkFilter : int32_t;
