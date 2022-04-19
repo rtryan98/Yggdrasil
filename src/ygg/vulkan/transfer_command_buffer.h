@@ -70,6 +70,11 @@ namespace ygg::vk
             uint32_t frame_in_flight, uint32_t queue_family_index);
 
         /**
+         * @brief Returns the bound command buffer.
+        */
+        VkCommandBuffer handle() const { return m_cmdbuf; }
+
+        /**
          * @brief Starts recording commands. The command buffer can only be submitted once.
         */
         void begin() const;
