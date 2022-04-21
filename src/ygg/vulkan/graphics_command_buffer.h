@@ -42,17 +42,16 @@ namespace ygg::vk
             int32_t y;
             int32_t z;
         };
-        VkImageAspectFlags src_aspect_mask;
         uint32_t src_mip_level;
         uint32_t src_base_array_layer;
         uint32_t src_layer_count;
         Offset_3d src_offsets[2];
-        VkImageAspectFlags dst_aspect_mask;
         uint32_t dst_mip_level;
         uint32_t dst_base_array_layer;
         uint32_t dst_layer_count;
         Offset_3d dst_offsets[2];
         VkFilter filter;
+        VkImageAspectFlags aspect_mask;
     };
 
     /**

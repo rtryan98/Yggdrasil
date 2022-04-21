@@ -83,7 +83,7 @@ namespace ygg::vk
             .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2,
             .pNext = nullptr,
             .srcSubresource = {
-                .aspectMask = blit_info.src_aspect_mask,
+                .aspectMask = blit_info.aspect_mask,
                 .mipLevel = blit_info.src_mip_level,
                 .baseArrayLayer = blit_info.src_base_array_layer,
                 .layerCount = blit_info.src_layer_count
@@ -93,7 +93,7 @@ namespace ygg::vk
                 { blit_info.src_offsets[1].x, blit_info.src_offsets[1].y, blit_info.src_offsets[1].z }
             },
             .dstSubresource = {
-                .aspectMask = blit_info.dst_aspect_mask,
+                .aspectMask = blit_info.aspect_mask,
                 .mipLevel = blit_info.dst_mip_level,
                 .baseArrayLayer = blit_info.dst_base_array_layer,
                 .layerCount = blit_info.dst_layer_count
