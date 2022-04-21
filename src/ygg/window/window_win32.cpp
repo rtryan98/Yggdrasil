@@ -19,6 +19,13 @@ namespace ygg
         case WM_CLOSE:
             data.is_closed = true;
             break;
+        case WM_GETMINMAXINFO:
+        {
+            auto& size = reinterpret_cast<LPMINMAXINFO>(lparam)->ptMinTrackSize;
+            size.x = 256;
+            size.y = 144;
+            break;
+        }
         case WM_KEYDOWN:
             break;
         case WM_KEYUP:
