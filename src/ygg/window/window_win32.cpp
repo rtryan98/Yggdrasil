@@ -51,17 +51,16 @@ namespace ygg
     }
 
     Window_win32::Window_win32(uint32_t width, uint32_t height, const char* name)
-        : m_data{ width, height, name, false }, m_hwnd(0), m_hinstance(GetModuleHandle(nullptr))
+        : m_data{ width, height, name, WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false },
+        m_hwnd(0), m_hinstance(GetModuleHandle(nullptr))
     {
-        DWORD style = WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-
         RECT wr = {
             .left = 0,
             .top = 0,
             .right = LONG(m_data.width),
             .bottom = LONG(m_data.height)
         };
-        AdjustWindowRect(&wr, style, false);
+        AdjustWindowRect(&wr, DWORD(m_data.style), false);
 
         WNDCLASSEX wc = {
             .cbSize = sizeof(WNDCLASSEX),
@@ -79,8 +78,8 @@ namespace ygg
         };
         RegisterClassEx(&wc);
 
-        m_hwnd = CreateWindowEx(0, wc.lpszClassName, wc.lpszClassName, style, 0, 0, wr.right - wr.left, wr.bottom - wr.top,
-            nullptr, nullptr, m_hinstance, 0);
+        m_hwnd = CreateWindowEx(0, wc.lpszClassName, wc.lpszClassName, DWORD(m_data.style), 0, 0,
+            wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, m_hinstance, 0);
         SetWindowLongPtr(m_hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&m_data));
 
         ShowWindow(m_hwnd, SW_SHOWDEFAULT);

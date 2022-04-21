@@ -18,6 +18,7 @@ namespace ygg
         uint32_t width;
         uint32_t height;
         std::string name;
+        uint64_t style;
         bool is_closed;
     };
 
