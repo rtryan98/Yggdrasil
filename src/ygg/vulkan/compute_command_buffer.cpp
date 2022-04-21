@@ -27,9 +27,11 @@ namespace ygg::vk
     }
 
     void Compute_command_buffer::clear_image(const Image& image, VkImageLayout layout,
-        const VkClearValue& clear_value, uint32_t base_mip_level, uint32_t level_count,
+        const Clear_value& clear_value, uint32_t base_mip_level, uint32_t level_count,
         uint32_t base_array_layer, uint32_t layer_count) const
     {
+        static_assert(sizeof(VkClearValue) == sizeof(Clear_value));
+
         VkImageSubresourceRange range = {
             .aspectMask = img_utils::get_default_aspect_mask(image.info.format),
             .baseMipLevel = base_mip_level,
@@ -37,14 +39,17 @@ namespace ygg::vk
             .baseArrayLayer = base_array_layer,
             .layerCount = layer_count
         };
+        VkClearValue cv = {};
+        memcpy(&cv, &clear_value, sizeof(VkClearValue));
+
         auto format_info = img_utils::get_format_info(image.info.format);
         if (format_info.depth || format_info.stencil) {
             vkCmdClearDepthStencilImage(m_cmdbuf, image.allocated_image.handle, layout,
-                &clear_value.depthStencil, 1, &range);
+                &cv.depthStencil, 1, &range);
         }
         else if (format_info.red || format_info.green || format_info.blue || format_info.alpha) {
             vkCmdClearColorImage(m_cmdbuf, image.allocated_image.handle, layout,
-                &clear_value.color, 1, &range);
+                &cv.color, 1, &range);
         }
     }
 

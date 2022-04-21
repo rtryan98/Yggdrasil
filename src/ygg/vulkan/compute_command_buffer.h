@@ -11,6 +11,24 @@ namespace ygg::vk
     struct Pipeline;
 
     /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkClearValue.html
+    */
+    union Clear_value
+    {
+        union
+        {
+            float_t f32[4];
+            int32_t i32[4];
+            uint32_t u32[4];
+        } color;
+        struct
+        {
+            float_t depth;
+            uint32_t stencil;
+        } depth_stencil;
+    };
+
+    /**
      * @brief A wrapper around a given `VkCommandBuffer` capable of transfer and compute commands.
     */
     class Compute_command_buffer : public Transfer_command_buffer
@@ -35,7 +53,7 @@ namespace ygg::vk
          * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCmdClearColorImage.html
          * https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCmdClearDepthStencilImage.html
         */
-        void clear_image(const Image& image, VkImageLayout layout, const VkClearValue& clear_value, uint32_t base_mip_level,
+        void clear_image(const Image& image, VkImageLayout layout, const Clear_value& clear_value, uint32_t base_mip_level,
             uint32_t level_count, uint32_t base_array_layer, uint32_t layer_count) const;
 
         /**
