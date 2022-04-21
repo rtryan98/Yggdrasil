@@ -56,24 +56,6 @@ namespace ygg::vk
     };
 
     /**
-     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkClearValue.html
-    */
-    union Clear_value
-    {
-        union
-        {
-            float_t f32[4];
-            int32_t i32[4];
-            uint32_t u32[4];
-        } color;
-        struct
-        {
-            float_t depth;
-            uint32_t stencil;
-        } depth_stencil;
-    };
-
-    /**
      * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkRenderingInfo.html
     */
     struct Rendering_info
