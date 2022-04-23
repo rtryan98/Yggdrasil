@@ -16,3 +16,6 @@
 [submodule "vendor/vulkan-docs"]
 	path = vendor/vulkan-docs
 	url = https://github.com/KhronosGroup/Vulkan-Docs
+[submodule "vendor/glslang"]
+	path = vendor/glslang
+	url = https://github.com/KhronosGroup/glslang
