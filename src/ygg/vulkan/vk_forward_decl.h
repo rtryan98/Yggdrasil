@@ -44,11 +44,14 @@ YGG_FORWARDDECL_VK_HANDLE(VmaDefragmentationContext);
 
 typedef uint32_t VkFlags;
 typedef VkFlags VkBufferUsage;
+typedef VkFlags VkColorComponentFlags;
+typedef VkFlags VkCullModeFlags;
 typedef VkFlags VkDependencyFlags;
 typedef VkFlags VkImageAspectFlags;
 typedef VkFlags VkImageCreateFlags;
 typedef VkFlags VkImageUsage;
 typedef VkFlags VkMemoryPropertyFlags;
+typedef VkFlags VkPipelineCreateFlags;
 typedef VkFlags VkShaderStageFlags;
 
 typedef uint64_t VkFlags64;
@@ -59,17 +62,29 @@ typedef uint64_t VkDeviceSize;
 
 enum VkAttachmentLoadOp : int32_t;
 enum VkAttachmentStoreOp : int32_t;
+enum VkBlendFactor : int32_t;
+enum VkBlendOp : int32_t;
 enum VkColorSpaceKHR : int32_t;
 enum VkCommandBufferLevel : int32_t;
 enum VkCommandPoolResetFlagBits : int32_t;
+enum VkCompareOp : int32_t;
+enum VkDynamicState : int32_t;
 enum VkFilter : int32_t;
+enum VkFrontFace : int32_t;
 enum VkIndexType : int32_t;
 enum VkImageLayout : int32_t;
 enum VkImageType : int32_t;
 enum VkImageViewType : int32_t;
 enum VkFormat : int32_t;
+enum VkLogicOp : int32_t;
 enum VkPipelineBindPoint : int32_t;
+enum VkPolygonMode : int32_t;
+enum VkPrimitiveTopology : int32_t;
 enum VkResult : int32_t;
+enum VkShaderStageFlagBits : int32_t;
+enum VkStencilOp : int32_t;
+enum VkTessellationDomainOrigin : int32_t;
+enum VkVertexInputRate : int32_t;
 
 struct VkBufferMemoryBarrier2;
 struct VkImageSubresourceRange;

@@ -5,6 +5,8 @@
 #include "ygg/vulkan/vk_forward_decl.h"
 
 #include <array>
+#include <optional>
+#include <vector>
 
 namespace ygg::vk
 {
@@ -169,4 +171,191 @@ namespace ygg::vk
         VkPipeline handle;
         VkPipelineBindPoint bind_point;
     };
+
+    /**
+     * @brief Shader module "primitive".
+    */
+    struct Shader_module
+    {
+        VkShaderModule handle;
+        VkShaderStageFlagBits stage;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateShaderModule.html
+    */
+    Shader_module create_shader_module(VkDevice device, const std::vector<uint32_t>& spirv, VkShaderStageFlagBits stage);
+
+    /**
+     * @brief Collection of Shader_modules used inside a graphics pipeline.
+    */
+    struct Graphics_program
+    {
+        Shader_module vert;
+        std::optional<Shader_module> tesc;
+        std::optional<Shader_module> tese;
+        std::optional<Shader_module> geom;
+        Shader_module frag;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineColorBlendAttachmentState.html
+    */
+    struct Graphics_pipeline_color_attachment_info
+    {
+        bool blend_enable;
+        VkBlendFactor src_color_blend_factor;
+        VkBlendFactor dst_color_blend_factor;
+        VkBlendOp color_blend_op;
+        VkBlendFactor src_alpha_blend_factor;
+        VkBlendFactor dst_alpha_blend_factor;
+        VkBlendOp alpha_blend_op;
+        VkColorComponentFlags color_write_mask;
+        VkFormat format;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkVertexInputBindingDescription.html
+    */
+    struct Graphics_pipeline_vertex_binding
+    {
+        uint32_t binding;
+        uint32_t stride;
+        VkVertexInputRate input_rate;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkVertexInputAttributeDescription.html
+    */
+    struct Graphics_pipeline_attribute_description
+    {
+        uint32_t location;
+        uint32_t binding;
+        VkFormat format;
+        uint32_t offset;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineVertexInputStateCreateInfo.html
+    */
+    struct Graphics_pipeline_vertex_input_state
+    {
+        std::vector<Graphics_pipeline_vertex_binding> bindings;
+        std::vector<Graphics_pipeline_attribute_description> attribute_descriptions;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineTessellationStateCreateInfo.html
+    */
+    struct Graphics_pipeline_tesselation_state
+    {
+        uint32_t patch_control_points;
+        VkTessellationDomainOrigin domain_origin;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineRasterizationStateCreateInfo.html
+    */
+    struct Graphics_pipeline_rasterization_state
+    {
+        bool depth_clamp_enable;
+        bool rasterizer_discard_enable;
+        VkPolygonMode polygon_mode;
+        VkCullModeFlags cull_mode;
+        VkFrontFace front_face;
+        bool depth_bias_enable;
+        float_t depth_bias_constant_factor;
+        float_t depth_bias_clamp;
+        float_t depth_bias_slope_factor;
+        float_t line_width;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkStencilOpState.html
+    */
+    struct Graphics_pipeline_stencil_op_state
+    {
+        VkStencilOp fail_op;
+        VkStencilOp pass_op;
+        VkStencilOp depth_fail_op;
+        VkCompareOp compare_op;
+        uint32_t compare_mask;
+        uint32_t write_mask;
+        uint32_t reference;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineDepthStencilStateCreateInfo.html
+    */
+    struct Graphics_pipeline_depth_stencil_state
+    {
+        bool depth_test_enable;
+        bool depth_write_enable;
+        VkCompareOp compare_op;
+        bool depth_bounds_test_enable;
+        bool stencil_test_enable;
+        Graphics_pipeline_stencil_op_state front;
+        Graphics_pipeline_stencil_op_state back;
+        float_t min_depth_bounds;
+        float_t max_depth_bounds;
+        VkFormat depth_format;
+        VkFormat stencil_format;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineInputAssemblyStateCreateInfo.html
+    */
+    struct Graphics_pipeline_input_assembly_state
+    {
+        VkPrimitiveTopology topology;
+        bool primitive_restart_enable;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPipelineColorBlendStateCreateInfo.html
+    */
+    struct Graphics_pipeline_color_blend_state
+    {
+        bool logic_op_enable;
+        VkLogicOp logic_op;
+        float_t blend_constants[4];
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkGraphicsPipelineCreateInfo.html
+    */
+    struct Graphics_pipeline_info
+    {
+        VkPipelineCreateFlags flags;
+        Graphics_program program;
+        std::optional<Graphics_pipeline_vertex_input_state> vertex_input_state;
+        Graphics_pipeline_input_assembly_state input_assembly_state;
+        Graphics_pipeline_rasterization_state raster_state;
+        std::optional<Graphics_pipeline_tesselation_state> tesselation_state;
+        std::optional<Graphics_pipeline_depth_stencil_state> depth_stencil_state;
+        std::optional<Graphics_pipeline_color_blend_state> color_blend_state;
+        std::vector<VkDynamicState> dynamic_states; // VK_DYNAMIC_STATE_VIEWPORT and VK_DYNAMIC_STATE_SCISSOR are always set.
+        std::vector<Graphics_pipeline_color_attachment_info> render_target_infos;
+        VkPipelineLayout layout;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkComputePipelineCreateInfo.html
+    */
+    struct Compute_pipeline_info
+    {
+        VkPipelineCreateFlags flags;
+        Shader_module shader;
+        VkPipelineLayout layout;
+    };
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateGraphicsPipelines.html
+    */
+    VkPipeline create_graphics_pipeline(VkDevice device, const Graphics_pipeline_info& info, VkPipelineCache cache = nullptr);
+
+    /**
+     * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateComputePipelines.html
+    */
+    VkPipeline create_compute_pipeline(VkDevice device, const Compute_pipeline_info& info, VkPipelineCache cache = nullptr);
 }
