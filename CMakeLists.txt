@@ -12,6 +12,7 @@ project(${YGG_PROJECT})
 find_package(Vulkan REQUIRED)
 add_subdirectory("vendor/volk")
 add_subdirectory("vendor/vma")
+add_subdirectory("vendor/glslang")
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/vendor/vulkan-profiles/scripts/genvp.py
@@ -36,7 +37,10 @@ target_include_directories(${YGG_LIBRARY} PUBLIC
     "vendor/concurrentqueue")
 target_link_libraries(${YGG_LIBRARY} PUBLIC
     volk_headers
-    VulkanMemoryAllocator)
+    VulkanMemoryAllocator
+    glslang
+    SPIRV
+    )
 
 target_compile_definitions(${YGG_LIBRARY} PRIVATE
     VK_USE_PLATFORM_WIN32_KHR=1)
