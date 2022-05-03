@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "ygg/vulkan/descriptors.h"
 #include "ygg/vulkan/linear_host_resource_allocator.h"
 #include "ygg/vulkan/command_buffer_recycler.h"
 #include "ygg/vulkan/resource.h"
@@ -77,6 +78,11 @@ namespace ygg::vk
         Graphics_command_buffer acquire_graphics_command_buffer();
 
         /**
+         * @brief Use to allocate a descriptor set that is only used in the current frame.
+        */
+        VkDescriptorSet allocate_transient_descriptor_set(VkDescriptorSetLayout layout);
+
+        /**
         * Zombify-methods are used to declare that a resource is a zombie. Any zombified resource
         * will be destroyed once this frame in flight is hit the next time. That means either either
         * two or three frames. This is useful for resources such as semaphores when acquiring an image
@@ -96,7 +102,8 @@ namespace ygg::vk
         Linear_host_resource_allocator_provider m_linear_host_resource_allocator_provider;
         Command_buffer_recycler m_graphics_command_buffer_recycler;
         Command_buffer_recycler m_async_compute_command_buffer_recycler;
-        
+        std::unique_ptr<Transient_descriptor_set_allocator> m_transient_descriptor_set_allocator;
+
         std::vector<VkSemaphore> m_zombie_semaphores = {};
         std::vector<VkFence> m_zombie_fences = {};
     };
@@ -141,21 +148,38 @@ namespace ygg::vk
         */
         void begin_frame();
 
+        /*
+        * Descriptor updates
+        */
+        void update_descriptor_set(const Descriptor_set_write_info& info);
+        void update_descriptor_sets(std::span<Descriptor_set_write_info> infos);
+
         /**
          * Resource creation and destruction methods.
         */
 
         Image create_image(const Image_info& info, uint32_t initial_queue_family_index) const;
         Buffer create_buffer(const Buffer_info& info, uint32_t initial_queue_family_index) const;
+        VkDescriptorSetLayout create_descriptor_set_layout(const Descriptor_set_layout_info& info) const;
+        VkPipelineLayout create_pipeline_layout(const Pipeline_layout_info& info) const;
+        Pipeline create_graphics_pipeline(const Graphics_pipeline_info& info) const;
+        Pipeline create_compute_pipeline(const Compute_pipeline_info& info) const;
+        Shader_module create_shader_module(std::span<uint32_t> spirv, VkShaderStageFlagBits stage) const;
         VkSemaphore create_binary_semaphore() const;
+        Allocated_buffer select_allocated_buffer(const Buffer& buf) const;
 
         void destroy_image(Image& image) const;
         void destroy_buffer(Buffer& buffer) const;
+        void destroy_descriptor_set_layout(VkDescriptorSetLayout layout) const;
+        void destroy_pipeline_layout(VkPipelineLayout layout) const;
+        void destroy_pipeline(Pipeline& pipeline) const;
+        void destroy_shader_module(Shader_module& shader) const;
 
         /**
          * @brief Use for quickly submitting a single command buffer to a queue.
          * @details The semaphores are optional and may be VK_NULL_HANDLE.
          * The fence is optional and may be VK_NULL_HANDLE.
+         * The semaphores that can be passed to this function MUST be binary semaphores.
         */
         VkResult submit_simple(VkQueue queue, VkCommandBuffer cmdbuf, 
             VkSemaphore await_sema, VkSemaphore signal_sema, VkFence signal_fence);

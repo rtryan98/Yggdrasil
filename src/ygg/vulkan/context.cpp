@@ -23,7 +23,25 @@ namespace ygg::vk
             VK_COMMAND_POOL_CREATE_TRANSIENT_BIT),
         m_async_compute_command_buffer_recycler(m_context.device(), m_context.graphics_queue().queue_family_index,
             VK_COMMAND_POOL_CREATE_TRANSIENT_BIT)
-    {}
+    {
+        std::vector<Descriptor_pool_size> transient_pool_sizes = {
+            { VK_DESCRIPTOR_TYPE_SAMPLER, 64 },
+            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 512 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 512 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 512 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 512 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 512 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 512 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 512 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 512 },
+        };
+        if (context.profile() == Profile::Tier_2 || context.profile() == Profile::Tier_3) {
+            transient_pool_sizes.emplace_back( Descriptor_pool_size{ VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, 512 } );
+        }
+        m_transient_descriptor_set_allocator = std::make_unique<Transient_descriptor_set_allocator>(
+            m_context.device(),
+            transient_pool_sizes);
+    }
 
     Frame_context::~Frame_context()
     {
@@ -36,6 +54,7 @@ namespace ygg::vk
         m_linear_host_resource_allocator_provider.reset();
         m_graphics_command_buffer_recycler.reset();
         m_async_compute_command_buffer_recycler.reset();
+        m_transient_descriptor_set_allocator->reset();
     }
 
     Linear_host_resource_allocator& Frame_context::acquire_linear_host_resource_allocator()
@@ -57,6 +76,11 @@ namespace ygg::vk
         m_graphics_command_buffer_recycler.recycle(cmdbuf);
         return Graphics_command_buffer(cmdbuf, acquire_linear_host_resource_allocator(), m_context.current_frame_in_flight(),
             m_context.graphics_queue().queue_family_index );
+    }
+
+    VkDescriptorSet Frame_context::allocate_transient_descriptor_set(VkDescriptorSetLayout layout)
+    {
+        return m_transient_descriptor_set_allocator->get_set(layout);
     }
 
     void Frame_context::destroy_all_zombies()
@@ -356,6 +380,16 @@ namespace ygg::vk
         frame_context().start_frame();
     }
 
+    void Context::update_descriptor_set(const Descriptor_set_write_info& info)
+    {
+        vk::update_descriptor_set(m_device, info);
+    }
+
+    void Context::update_descriptor_sets(std::span<Descriptor_set_write_info> infos)
+    {
+        vk::update_descriptor_sets(m_device, infos);
+    }
+
     Image Context::create_image(const Image_info& info, uint32_t initial_queue_family_index) const
     {
         return vk::create_image(info, initial_queue_family_index, m_allocator, m_device);
@@ -364,6 +398,37 @@ namespace ygg::vk
     Buffer Context::create_buffer(const Buffer_info& info, uint32_t initial_queue_family_index) const
     {
         return vk::create_buffer(info, initial_queue_family_index, m_allocator, m_max_frames_in_flight);
+    }
+
+    VkDescriptorSetLayout Context::create_descriptor_set_layout(const Descriptor_set_layout_info& info) const
+    {
+        return vk::create_descriptor_set_layout(m_device, info);
+    }
+
+    VkPipelineLayout Context::create_pipeline_layout(const Pipeline_layout_info& info) const
+    {
+        return vk::create_pipeline_layout(m_device, info);
+    }
+
+    Pipeline Context::create_graphics_pipeline(const Graphics_pipeline_info& info) const
+    {
+        Pipeline result = {};
+        result.handle = vk::create_graphics_pipeline(m_device, info);
+        result.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        return result;
+    }
+
+    Pipeline Context::create_compute_pipeline(const Compute_pipeline_info& info) const
+    {
+        Pipeline result = {};
+        result.handle = vk::create_compute_pipeline(m_device, info);
+        result.bind_point = VK_PIPELINE_BIND_POINT_COMPUTE;
+        return result;
+    }
+
+    Shader_module Context::create_shader_module(std::span<uint32_t> spirv, VkShaderStageFlagBits stage) const
+    {
+        return vk::create_shader_module(m_device, spirv, stage);
     }
 
     VkSemaphore Context::create_binary_semaphore() const
@@ -384,6 +449,11 @@ namespace ygg::vk
         return result;
     }
 
+    Allocated_buffer Context::select_allocated_buffer(const Buffer& buf) const
+    {
+        return vk::select_allocated_buffer(buf, m_current_frame_in_flight);
+    }
+
     void Context::destroy_image(Image& image) const
     {
         vk::destroy_image(image, m_allocator, m_device);
@@ -392,6 +462,26 @@ namespace ygg::vk
     void Context::destroy_buffer(Buffer& buffer) const
     {
         vk::destroy_buffer(buffer, m_allocator, m_max_frames_in_flight);
+    }
+
+    void Context::destroy_descriptor_set_layout(VkDescriptorSetLayout layout) const
+    {
+        vkDestroyDescriptorSetLayout(m_device, layout, nullptr);
+    }
+
+    void Context::destroy_pipeline_layout(VkPipelineLayout layout) const
+    {
+        vkDestroyPipelineLayout(m_device, layout, nullptr);
+    }
+
+    void Context::destroy_pipeline(Pipeline& pipeline) const
+    {
+        vk::destroy_pipeline(m_device, pipeline);
+    }
+
+    void Context::destroy_shader_module(Shader_module& shader) const
+    {
+        vk::destroy_shader_module(m_device, shader);
     }
 
     VkResult Context::submit_simple(VkQueue queue, VkCommandBuffer cmdbuf,
