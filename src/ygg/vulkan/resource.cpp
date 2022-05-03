@@ -153,6 +153,7 @@ namespace ygg::vk
         default: assert(false && "Unreachable code.");
         case Buffer_domain::Host_write_combined:
             allocation_create_info.flags =
+                VMA_ALLOCATION_CREATE_MAPPED_BIT |
                 VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT |
                 VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT;
             allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
@@ -162,6 +163,7 @@ namespace ygg::vk
             break;
         case Buffer_domain::Device_host_visible:
             allocation_create_info.flags =
+                VMA_ALLOCATION_CREATE_MAPPED_BIT |
                 VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT |
                 VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT;
             allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
@@ -171,7 +173,7 @@ namespace ygg::vk
             break;
         }
         for (uint32_t i = 0; i < get_allocated_buffer_count(result.info.domain, max_frames_in_flight); i++) {
-            auto& allocated_buffer = select_allocated_buffer(result, max_frames_in_flight);
+            auto& allocated_buffer = select_allocated_buffer(result, i);
             VmaAllocationInfo allocation_info = {};
             // TODO: add VK_CHECK();
             vmaCreateBuffer(allocator, &buffer_create_info, &allocation_create_info, &allocated_buffer.handle,
@@ -245,7 +247,7 @@ namespace ygg::vk
         vmaDestroyImage(allocator, image.allocated_image.handle, image.allocated_image.allocation);
     }
 
-    Shader_module create_shader_module(VkDevice device, const std::vector<uint32_t>& spirv, VkShaderStageFlagBits stage)
+    Shader_module create_shader_module(VkDevice device, std::span<uint32_t> spirv, VkShaderStageFlagBits stage)
     {
         VkShaderModule sh_module = VK_NULL_HANDLE;
         VkShaderModuleCreateInfo info = {
@@ -261,6 +263,11 @@ namespace ygg::vk
             .handle = sh_module,
             .stage = stage
         };
+    }
+
+    void destroy_shader_module(VkDevice device, Shader_module& shader)
+    {
+        vkDestroyShaderModule(device, shader.handle, nullptr);
     }
 
     VkPipelineShaderStageCreateInfo shader_stage_create_info(VkShaderModule module, VkShaderStageFlagBits stage)
@@ -351,6 +358,18 @@ namespace ygg::vk
                 :   0
         };
 
+        VkViewport vp = {};
+        VkRect2D sc = {};
+        VkPipelineViewportStateCreateInfo viewport_state = {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .viewportCount = 1,
+            .pViewports = &vp,
+            .scissorCount = 1,
+            .pScissors = &sc
+        };
+
         VkPipelineRasterizationStateCreateInfo raster_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -365,6 +384,14 @@ namespace ygg::vk
             .depthBiasClamp = info.raster_state.depth_bias_clamp,
             .depthBiasSlopeFactor = info.raster_state.depth_bias_slope_factor,
             .lineWidth = info.raster_state.line_width
+        };
+
+        VkPipelineMultisampleStateCreateInfo multi_sample_state = {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+            .sampleShadingEnable = VK_FALSE
         };
 
         auto ds_state = info.depth_stencil_state.value_or(Graphics_pipeline_depth_stencil_state());
@@ -468,15 +495,16 @@ namespace ygg::vk
             .flags = info.flags,
             .stageCount = stage_count,
             .pStages = shader_stage_info.data(),
-            .pVertexInputState = info.vertex_input_state.has_value() ? &vertex_input_state_info : nullptr,
+            .pVertexInputState = &vertex_input_state_info,
             .pInputAssemblyState = &input_assembly_info,
             .pTessellationState = info.tesselation_state.has_value() ? &tesselation_info : nullptr,
-            .pViewportState = nullptr,
+            .pViewportState = &viewport_state,
             .pRasterizationState = &raster_info,
-            .pMultisampleState = nullptr,
+            .pMultisampleState = &multi_sample_state,
             .pDepthStencilState = info.depth_stencil_state.has_value() ? &depth_stencil_info : nullptr,
             .pColorBlendState = (info.render_target_infos.size() > 0) ? &color_blend_info : nullptr,
             .pDynamicState = &dynamic_state_create_info,
+            .layout = info.layout,
             .renderPass = VK_NULL_HANDLE,
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
@@ -502,5 +530,10 @@ namespace ygg::vk
         VkPipeline result = VK_NULL_HANDLE;
         vkCreateComputePipelines(device, cache, 1, &create_info, nullptr, &result);
         return result;
+    }
+
+    void destroy_pipeline(VkDevice device, Pipeline pipeline)
+    {
+        vkDestroyPipeline(device, pipeline.handle, nullptr);
     }
 }

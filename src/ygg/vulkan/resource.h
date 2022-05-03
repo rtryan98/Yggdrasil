@@ -6,6 +6,7 @@
 
 #include <array>
 #include <optional>
+#include <span>
 #include <vector>
 
 namespace ygg::vk
@@ -184,7 +185,9 @@ namespace ygg::vk
     /**
      * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateShaderModule.html
     */
-    Shader_module create_shader_module(VkDevice device, const std::vector<uint32_t>& spirv, VkShaderStageFlagBits stage);
+    Shader_module create_shader_module(VkDevice device, std::span<uint32_t> spirv, VkShaderStageFlagBits stage);
+
+    void destroy_shader_module(VkDevice device, Shader_module& shader);
 
     /**
      * @brief Collection of Shader_modules used inside a graphics pipeline.
@@ -210,7 +213,11 @@ namespace ygg::vk
         VkBlendFactor src_alpha_blend_factor;
         VkBlendFactor dst_alpha_blend_factor;
         VkBlendOp alpha_blend_op;
-        VkColorComponentFlags color_write_mask;
+        VkColorComponentFlags color_write_mask =
+            0x00000001 |    // VK_COLOR_COMPONENT_R_BIT
+            0x00000002 |    // VK_COLOR_COMPONENT_G_BIT
+            0x00000004 |    // VK_COLOR_COMPONENT_B_BIT
+            0x00000008;     // VK_COLOR_COMPONENT_A_BIT
         VkFormat format;
     };
 
@@ -358,4 +365,6 @@ namespace ygg::vk
      * @brief https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateComputePipelines.html
     */
     VkPipeline create_compute_pipeline(VkDevice device, const Compute_pipeline_info& info, VkPipelineCache cache = nullptr);
+
+    void destroy_pipeline(VkDevice device, Pipeline pipeline);
 }
