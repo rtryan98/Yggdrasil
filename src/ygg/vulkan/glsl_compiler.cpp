@@ -48,7 +48,112 @@ namespace ygg::vk::glsl_compiler
     constexpr glslang::EshTargetClientVersion VULKAN_CLIENT_VERSION = glslang::EShTargetVulkan_1_3;
     constexpr glslang::EShTargetLanguageVersion TARGET_SPIRV_VERSION = glslang::EShTargetSpv_1_6;
     constexpr int32_t DEFAULT_VERSION = 100;
-    constexpr TBuiltInResource DEFAULT_RESOURCE = {};
+    constexpr TBuiltInResource DEFAULT_RESOURCE = {
+        .maxLights = 32,
+        .maxClipPlanes = 6,
+        .maxTextureUnits = 32,
+        .maxTextureCoords = 32,
+        .maxVertexAttribs = 64,
+        .maxVertexUniformComponents = 4096,
+        .maxVaryingFloats = 64,
+        .maxVertexTextureImageUnits = 32,
+        .maxCombinedTextureImageUnits = 80,
+        .maxTextureImageUnits = 32,
+        .maxFragmentUniformComponents = 4096,
+        .maxDrawBuffers = 32,
+        .maxVertexUniformVectors = 128,
+        .maxVaryingVectors = 8,
+        .maxFragmentUniformVectors = 16,
+        .maxVertexOutputVectors = 16,
+        .maxFragmentInputVectors = 15,
+        .minProgramTexelOffset = -8,
+        .maxProgramTexelOffset = 7,
+        .maxClipDistances = 8,
+        .maxComputeWorkGroupCountX = 65535,
+        .maxComputeWorkGroupCountY = 65535,
+        .maxComputeWorkGroupCountZ = 65535,
+        .maxComputeWorkGroupSizeX = 1024,
+        .maxComputeWorkGroupSizeY = 1024,
+        .maxComputeWorkGroupSizeZ = 64,
+        .maxComputeUniformComponents = 1024,
+        .maxComputeTextureImageUnits = 16,
+        .maxComputeImageUniforms = 8,
+        .maxComputeAtomicCounters = 8,
+        .maxComputeAtomicCounterBuffers = 1,
+        .maxVaryingComponents = 60,
+        .maxVertexOutputComponents = 64,
+        .maxGeometryInputComponents = 64,
+        .maxGeometryOutputComponents = 128,
+        .maxFragmentInputComponents = 128,
+        .maxImageUnits = 8,
+        .maxCombinedImageUnitsAndFragmentOutputs = 8,
+        .maxCombinedShaderOutputResources = 8,
+        .maxImageSamples = 0,
+        .maxVertexImageUniforms = 0,
+        .maxTessControlImageUniforms = 0,
+        .maxTessEvaluationImageUniforms = 0,
+        .maxGeometryImageUniforms = 0,
+        .maxFragmentImageUniforms = 8,
+        .maxCombinedImageUniforms = 8,
+        .maxGeometryTextureImageUnits = 16,
+        .maxGeometryOutputVertices = 256,
+        .maxGeometryTotalOutputComponents = 1024,
+        .maxGeometryUniformComponents = 1024,
+        .maxGeometryVaryingComponents = 64,
+        .maxTessControlInputComponents = 128,
+        .maxTessControlOutputComponents = 128,
+        .maxTessControlTextureImageUnits = 16,
+        .maxTessControlUniformComponents = 1024,
+        .maxTessControlTotalOutputComponents = 4096,
+        .maxTessEvaluationInputComponents = 128,
+        .maxTessEvaluationOutputComponents = 128,
+        .maxTessEvaluationTextureImageUnits = 16,
+        .maxTessEvaluationUniformComponents = 1024,
+        .maxTessPatchComponents = 120,
+        .maxPatchVertices = 32,
+        .maxTessGenLevel = 64,
+        .maxViewports = 16,
+        .maxVertexAtomicCounters = 0,
+        .maxTessControlAtomicCounters = 0,
+        .maxTessEvaluationAtomicCounters = 0,
+        .maxGeometryAtomicCounters = 0,
+        .maxFragmentAtomicCounters = 8,
+        .maxCombinedAtomicCounters = 8,
+        .maxAtomicCounterBindings = 1,
+        .maxVertexAtomicCounterBuffers = 0,
+        .maxTessControlAtomicCounterBuffers = 0,
+        .maxTessEvaluationAtomicCounterBuffers = 0,
+        .maxGeometryAtomicCounterBuffers = 0,
+        .maxFragmentAtomicCounterBuffers = 1,
+        .maxCombinedAtomicCounterBuffers = 1,
+        .maxAtomicCounterBufferSize = 16384,
+        .maxTransformFeedbackBuffers = 4,
+        .maxTransformFeedbackInterleavedComponents = 64,
+        .maxCullDistances = 8,
+        .maxCombinedClipAndCullDistances = 8,
+        .maxSamples = 4,
+        .maxMeshOutputVerticesNV = 256,
+        .maxMeshOutputPrimitivesNV = 512,
+        .maxMeshWorkGroupSizeX_NV = 32,
+        .maxMeshWorkGroupSizeY_NV = 1,
+        .maxMeshWorkGroupSizeZ_NV = 1,
+        .maxTaskWorkGroupSizeX_NV = 32,
+        .maxTaskWorkGroupSizeY_NV = 1,
+        .maxTaskWorkGroupSizeZ_NV = 1,
+        .maxMeshViewCountNV = 4,
+        .maxDualSourceDrawBuffersEXT = 1,
+        .limits = {
+            .nonInductiveForLoops = 1,
+            .whileLoops = 1,
+            .doWhileLoops = 1,
+            .generalUniformIndexing = 1,
+            .generalAttributeMatrixVectorIndexing = 1,
+            .generalVaryingIndexing = 1,
+            .generalSamplerIndexing = 1,
+            .generalVariableIndexing = 1,
+            .generalConstantMatrixVectorIndexing = 1,
+        }
+    };
 
     bool preprocess(glslang::TShader& shader, EShMessages messages,
         std::string& preprocess_target, glslang::TShader::Includer& includer)
@@ -109,13 +214,13 @@ namespace ygg::vk::glsl_compiler
         glslang::TProgram program = {};
 
         if (!preprocess(shader, messages, preprocessed_glsl, includer)) {
-            throw Glsl_compiler_error();
+            throw Glsl_compiler_error(std::string("Shader preprocess error.\n") + shader.getInfoLog());
         }
         if (!parse(shader, messages, preprocessed_glsl)) {
-            throw Glsl_compiler_error();
+            throw Glsl_compiler_error(std::string("Shader parse error.\n") + shader.getInfoLog());
         }
         if (!link(program, shader, messages)) {
-            throw Glsl_compiler_error();
+            throw Glsl_compiler_error(std::string("Shader link error.\n") + shader.getInfoLog());
         }
 
         return compile_spirv_1_6(type, program);

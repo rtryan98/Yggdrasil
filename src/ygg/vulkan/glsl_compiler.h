@@ -4,7 +4,7 @@
 
 #include "ygg/vulkan/vk_forward_decl.h"
 
-#include <exception>
+#include <stdexcept>
 #include <span>
 #include <string>
 #include <vector>
@@ -24,9 +24,10 @@ namespace ygg::vk::glsl_compiler
     /**
      * @brief Error thrown when compiling invalid GLSL code.
     */
-    class Glsl_compiler_error : public std::exception
+    class Glsl_compiler_error : public std::runtime_error
     {
     public:
+        Glsl_compiler_error(const std::string& s) : std::runtime_error(s) {}
         Glsl_compiler_error() = default;
     };
 
