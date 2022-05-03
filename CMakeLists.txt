@@ -14,17 +14,28 @@ add_subdirectory("vendor/volk")
 add_subdirectory("vendor/vma")
 add_subdirectory("vendor/glslang")
 
-find_package(Python3 REQUIRED COMPONENTS Interpreter)
-execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/vendor/vulkan-profiles/scripts/genvp.py
-    -registry ${CMAKE_CURRENT_SOURCE_DIR}/vendor/vulkan-docs/xml/vk.xml
-    -profiles ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan
-    -outIncDir ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated
-    -outSrcDir ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated
-    -outSchema ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/schema.json)
-file(REMOVE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/schema.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.cpp)
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.hpp)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated)
+    execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/vendor/vulkan-profiles/scripts/genvp.py
+        -registry ${CMAKE_CURRENT_SOURCE_DIR}/vendor/vulkan-docs/xml/vk.xml
+        -profiles ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan
+        -outIncDir ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated
+        -outSrcDir ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated
+        -outSchema ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/schema.json)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/schema.json)
+    file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/schema.json)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.h)
+    file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.h)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.cpp)
+    file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/src/ygg/vulkan/generated/vulkan_profiles.cpp)
+endif()
 
 file(GLOB_RECURSE "YGG_LIBRARY_SRC" "src/ygg/*.h" "src/ygg/*.cpp" "src/ygg/*.json" "src/ygg/*.hpp")
 ygg_group_files("${YGG_LIBRARY_SRC}")
