@@ -185,7 +185,7 @@ namespace ygg::vk
             .allocated_image = {
                 .handle = m_images[m_acquired_idx],
                 .default_view = m_image_views[m_acquired_idx],
-                .allocation = nullptr
+                .allocation = VK_NULL_HANDLE
             },
             .info = {
                 .width = m_width,
