@@ -32,6 +32,22 @@ namespace ygg::mini_sample
         }
         for (auto& p : m_graphics_pipelines) {
             m_context.destroy_pipeline(p.pipeline);
+            auto& program = p.create_info.info.program;
+            if (program.vert.handle) {
+                m_context.destroy_shader_module(program.vert);
+            }
+            if (program.tesc.has_value()) {
+                m_context.destroy_shader_module(program.tesc.value());
+            }
+            if (program.tese.has_value()) {
+                m_context.destroy_shader_module(program.tese.value());
+            }
+            if (program.geom.has_value()) {
+                m_context.destroy_shader_module(program.geom.value());
+            }
+            if (program.frag.handle) {
+                m_context.destroy_shader_module(program.frag);
+            }
         }
         cleanup();
         vk::glsl_compiler::deinit();
@@ -85,7 +101,8 @@ namespace ygg::mini_sample
 
     Graphics_pipeline_handle Base_app::create_managed_graphics_pipeline(const Graphics_pipeline_create_info& info)
     {
-        vk::Graphics_pipeline_info create_info = info.info;
+        Graphics_pipeline_create_info create_info = info;
+        auto& vk_create_info = create_info.info;
         vk::Graphics_program program = {};
 
         try {
@@ -136,10 +153,10 @@ namespace ygg::mini_sample
             program.frag = m_context.create_shader_module(spirv, VK_SHADER_STAGE_FRAGMENT_BIT);
         }
 
-        create_info.program = program;
+        vk_create_info.program = program;
         detail::Graphics_pipeline pipeline = {
-            .create_info = info,
-            .pipeline = m_context.create_graphics_pipeline(create_info)
+            .create_info = create_info,
+            .pipeline = m_context.create_graphics_pipeline(vk_create_info)
         };
         m_graphics_pipelines.push_back(pipeline);
         return Graphics_pipeline_handle(m_graphics_pipelines.size() - 1ull);
@@ -167,6 +184,9 @@ namespace ygg::mini_sample
     void Base_app::add_initial_upload(const Buffer_upload& buffer_upload)
     {
         void* data = malloc(buffer_upload.size);
+        if (!data) {
+            std::abort();
+        }
         memcpy(data, buffer_upload.data, buffer_upload.size);
         Buffer_upload u = {
             .dst = buffer_upload.dst,
