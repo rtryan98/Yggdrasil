@@ -13,6 +13,8 @@ namespace ygg
     class Handle
     {
     public:
+        Handle() = default;
+
         /**
          * @brief Constructs a Handle with underlying `t`.
         */
