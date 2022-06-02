@@ -521,4 +521,56 @@ namespace ygg::vk
         };
         return vkQueueSubmit2(queue, 1, &submit_info, signal_fence);
     }
+
+    VkResult Context::submit(VkQueue queue, const Submit& info, VkFence signal_fence)
+    {
+        std::vector<VkSemaphoreSubmitInfo> await_infos;
+        await_infos.reserve(info.await_semas.size());
+        for (const auto& s : info.await_semas) {
+            await_infos.emplace_back(VkSemaphoreSubmitInfo {
+                .sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO,
+                .pNext = nullptr,
+                .semaphore = s.semaphore,
+                .value = s.value,
+                .stageMask = s.stage_mask,
+                .deviceIndex = 0
+                });
+        }
+
+        std::vector<VkCommandBufferSubmitInfo> cmd_infos;
+        cmd_infos.reserve(info.cmd_bufs.size());
+        for (auto cmdbuf : info.cmd_bufs) {
+            cmd_infos.emplace_back(VkCommandBufferSubmitInfo {
+                .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO,
+                .pNext = nullptr,
+                .commandBuffer = cmdbuf,
+                .deviceMask = 1
+                });
+        }
+
+        std::vector<VkSemaphoreSubmitInfo> signal_infos;
+        signal_infos.reserve(info.signal_semas.size());
+        for (const auto& s : info.signal_semas) {
+            signal_infos.emplace_back(VkSemaphoreSubmitInfo{
+                .sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO,
+                .pNext = nullptr,
+                .semaphore = s.semaphore,
+                .value = s.value,
+                .stageMask = s.stage_mask,
+                .deviceIndex = 0
+                });
+        }
+
+        VkSubmitInfo2 submit_info = {
+            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2,
+            .pNext = nullptr,
+            .waitSemaphoreInfoCount = uint32_t(await_infos.size()),
+            .pWaitSemaphoreInfos = await_infos.data(),
+            .commandBufferInfoCount = uint32_t(cmd_infos.size()),
+            .pCommandBufferInfos = cmd_infos.data(),
+            .signalSemaphoreInfoCount = uint32_t(signal_infos.size()),
+            .pSignalSemaphoreInfos = signal_infos.data()
+        };
+        return vkQueueSubmit2(queue, 1, &submit_info, signal_fence);
+    }
 }

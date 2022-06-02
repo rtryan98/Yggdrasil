@@ -114,6 +114,20 @@ namespace ygg::vk
         uint32_t queue_family_index;
     };
 
+    struct Semaphore_signal_info
+    {
+        VkSemaphore semaphore;
+        uint64_t value;
+        VkPipelineStageFlags2 stage_mask;
+    };
+
+    struct Submit
+    {
+        std::span<Semaphore_signal_info> await_semas;
+        std::span<VkCommandBuffer> cmd_bufs;
+        std::span<Semaphore_signal_info> signal_semas;
+    };
+
     /**
      * @brief A simple Context for Vulkan applications.
      * @details Initializes Vulkan completely to be used.
@@ -183,6 +197,8 @@ namespace ygg::vk
         */
         VkResult submit_simple(VkQueue queue, VkCommandBuffer cmdbuf, 
             VkSemaphore await_sema, VkSemaphore signal_sema, VkFence signal_fence);
+
+        VkResult submit(VkQueue queue, const Submit& info, VkFence signal_fence);
 
         /**
          * @return The frame context for the current frame in flight.
