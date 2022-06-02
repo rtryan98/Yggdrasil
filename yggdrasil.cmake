@@ -23,3 +23,17 @@ macro(ygg_group_files FILES)
         source_group("${group_path}" FILES "${item}")
     endforeach()
 endmacro()
+
+macro(ygg_configure_project_msvc TARGET)
+    if(MSVC)
+        target_compile_options(${TARGET} PRIVATE
+        "/W4" "/MP" "/std:c++20" "/WX" "/wd26812")
+        target_compile_definitions(${TARGET} PRIVATE
+        "$<$<CONFIG:Debug>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=1; YGG_VULKAN_NAMES=1>")
+        target_compile_definitions(${TARGET} PRIVATE
+        "$<$<CONFIG:RelWithDebInfo>:YGG_VULKAN_VALIDATION=1; YGG_DEBUG=0; YGG_VULKAN_NAMES=1>")
+        target_compile_definitions(${TARGET} PRIVATE
+        "$<$<CONFIG:Release>:YGG_VULKAN_VALIDATION=0; YGG_DEBUG=0; YGG_VULKAN_NAMES=0>")
+        set_target_properties(${TARGET} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+    endif()
+endmacro()
